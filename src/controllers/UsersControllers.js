@@ -27,6 +27,7 @@ class UsersControllers {
     const database = await sqliteConnection();
 
     const user = await database.get("SELECT * FROM users WHERE id = (?)", [id]);
+    console.log(user);
     if(!user){
       throw new AppError("Usuário nao encontrado!")
     }
@@ -40,8 +41,8 @@ class UsersControllers {
     }
 
 
-    user.name = name;
-    user.email = email;
+    user.name =  name ?? user.name;
+    user.email = email ?? user.email;
 
     if (!currentPassword && newPAssword){
       throw new AppError("Digite a Sennha atual!");
@@ -64,7 +65,7 @@ class UsersControllers {
       password = ?
       WHERE id = ?
     
-    `, [name, email, user.password, id]
+    `, [user.name, user.email, user.password, id]
     );
 
     return response.status(200).json({})
