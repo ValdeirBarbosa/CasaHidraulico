@@ -1,16 +1,18 @@
 const sqliteConnection = require("../../sqlite");
 const sqlConnection = require("../../sqlite");
- const createUsers = require("./createUsers");
+const createUsers = require("./createUsers");
+const createProduct = require("./createProducts")
 
- async function migrationsRun(){
+async function migrationsRun() {
   const schemas = [
-    createUsers
-  ].join('');
+    createUsers,
+   // createProduct  exemplo de como add mais de uma query 
+  ].join(';');
 
   sqliteConnection()
-  .then(db => db.exec(schemas))
-  .catch(error => console.error(error));
+    .then(db => db.exec(schemas))
+    .catch(error => console.error(error));
 
- }
+};
 
- module.exports = migrationsRun;
+module.exports = migrationsRun;
