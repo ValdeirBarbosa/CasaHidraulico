@@ -1,4 +1,4 @@
-const { hash } = require("bcryptjs");
+const { hash, compare} = require("bcryptjs");
 const AppError = require("../utils/AppError")
 const sqliteConnection = require("../database/sqlite");
 const { application } = require("express");
@@ -22,7 +22,7 @@ class UsersControllers {
   }
 
   async update(request, response) {
-    const { name, email} = request.body;
+    const { name, email, currentPassword, newPAssword} = request.body;
     const { id } = request.params;
     const database = await sqliteConnection();
 
@@ -31,11 +31,11 @@ class UsersControllers {
       throw new AppError("Usuário nao encontrado!")
     }
     
-    const userWithUpatedEmail = await database.get("SELECT * FROM users WHERE email = (?)",[email]);
+    const userWithUpdatedEmail = await database.get("SELECT * FROM users WHERE email = (?)",[email]);
 
 
 
-    if (userWithUpatedEmail && userWithUpatedEmail.id !== user.id){
+    if (userWithUpdatedEmail && userWithUpdatedEmail.id !== user.id){
       throw new AppError("Este email ja esta em uso!");
     }
 
@@ -43,13 +43,28 @@ class UsersControllers {
     user.name = name;
     user.email = email;
 
+    if (!currentPassword && newPAssword){
+      throw new AppError("Digite a Sennha atual!");
+    }
+
+    if (currentPassword && newPAssword){
+      const checkCurrentPassword = await compare(currentPassword, user.password);
+      if(!checkCurrentPassword){
+        throw new AppError("Senha inválida")
+      }
+
+      user.password = await hash(newPAssword,8)
+      
+    }
+
     await database.run(`
       UPDATE users SET 
       name = ?,
-      email = ?
+      email = ?,
+      password = ?
       WHERE id = ?
     
-    `,[name, email,id]
+    `, [name, email, user.password, id]
     );
 
     return response.status(200).json({})
