@@ -8,7 +8,9 @@ class ClienteControllers {
     const { nome, email, telefone } = request.body;
     const database = await sqliteConnection();
     const checkClienteEmailExists = await database.get("SELECT * FROM clientes WHERE email = (?) OR telefone = (?)",[email, telefone])
-    console.log(checkClienteEmailExists);
+    if(checkClienteEmailExists){
+      throw new AppError("Email ou telefone ja em uso!",403)
+    }
 
     return response.status(200).json({})
 
