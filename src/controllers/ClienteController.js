@@ -21,6 +21,11 @@ class ClienteControllers {
     const clientes = await knex.select('*').from("clientes");
     return response.status(200).json(clientes)
   }
+  async show(request, response){
+    const {id_cliente}  = request.params
+    const clientes = await knex.select().from("clientes").where({ id: id_cliente });
+    return response.status(200).json(clientes)
+  }
 }
 
 module.exports = ClienteControllers

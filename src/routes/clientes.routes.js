@@ -16,6 +16,7 @@ function MyMiddleware(request, response, next) {
 const clienteControllers = new ClienteControllers();
 
 clienteRoutes.post("/", clienteControllers.create);
-clienteRoutes.get("/:codigo", clienteControllers.index);
+clienteRoutes.get("/", clienteControllers.index);
+clienteRoutes.get("/:id_cliente", clienteControllers.show);
 
 module.exports = clienteRoutes;
