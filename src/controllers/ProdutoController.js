@@ -21,5 +21,23 @@ class ProdutoController {
 
   }
 
+  async index(request, response){
+
+    const produtos  = await knex.select().from("produtos");
+
+    return response.json(produtos)
+
+  }
+
+  async show(request, response){
+    const {codigo} = request.params;
+
+   
+    const produto = await knex.select().from("produtos").where({codigo:codigo});
+
+
+    return response.json(produto)
+  }
+
 }
 module.exports = ProdutoController
