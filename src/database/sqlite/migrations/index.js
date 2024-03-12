@@ -1,6 +1,6 @@
 const sqliteConnection = require("../../sqlite");
 const sqlConnection = require("../../sqlite");
-const createUsers = require("./createUsers");
+const createUsers = require("./createUser");
 const createProduct = require("./createProducts")
 
 async function migrationsRun() {

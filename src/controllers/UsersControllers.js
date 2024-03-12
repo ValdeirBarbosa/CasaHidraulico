@@ -10,12 +10,12 @@ class UsersControllers {
     const { name, email, password } = request.body;
 
     const database = await sqliteConnection();
-    const checkUserExists = await database.get("SELECT * FROM users where email =(?)", [email])
+    const checkUserExists = await database.get("SELECT * FROM user where email =(?)", [email])
     if (checkUserExists) {
       throw new AppError("Este email ja esta em uso!")
     }
     const hashedPassword = await hash(password, 8);
-    await database.run("INSERT INTO users (name, email, password) VALUES (?,?,?)", [name, email, hashedPassword])
+    await database.run("INSERT INTO user (name, email, password) VALUES (?,?,?)", [name, email, hashedPassword])
     return response.status(201).json({ message: "Usuario criado com exito!" });
   }
 
@@ -23,13 +23,13 @@ class UsersControllers {
     const { name, email, currentPassword, newPAssword } = request.body;
     const { id } = request.params;
     const database = await sqliteConnection();
-    const user = await database.get("SELECT * FROM users WHERE id = (?)", [id]);
+    const user = await database.get("SELECT * FROM user WHERE id = (?)", [id]);
     console.log(user);
     if (!user) {
       throw new AppError("Usuário nao encontrado!")
     }
 
-    const userWithUpdatedEmail = await database.get("SELECT * FROM users WHERE email = (?)", [email]);
+    const userWithUpdatedEmail = await database.get("SELECT * FROM user WHERE email = (?)", [email]);
 
     if (userWithUpdatedEmail && userWithUpdatedEmail.id !== user.id) {
       throw new AppError("Este email ja esta em uso!");
@@ -50,7 +50,7 @@ class UsersControllers {
       user.password = await hash(newPAssword, 8)
     }
     await database.run(`
-      UPDATE users SET 
+      UPDATE user SET 
       name = ?,
       email = ?,
       password = ?

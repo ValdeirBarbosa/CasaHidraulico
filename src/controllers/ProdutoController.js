@@ -9,12 +9,12 @@ class ProdutoController {
       throw new AppError("Dados de codigo e descrição devem ser informados")
     }
 
-    const [checkIfTheCodeProductExists] = await knex("produtos").where({ codigo: codigo })
+    const [checkIfTheCodeProductExists] = await knex("produto").where({ codigo: codigo })
 
     if (checkIfTheCodeProductExists) {
       throw new AppError("Codigo ja utilizado!")
     }
-    const produto = await knex("produtos").insert({ codigo, descricao })
+    const produto = await knex("produto").insert({ codigo, descricao })
     console.log(produto);
 
     return response.status(200).json({})
@@ -23,7 +23,7 @@ class ProdutoController {
 
   async index(request, response){
 
-    const produtos  = await knex.select().from("produtos");
+    const produtos  = await knex.select().from("produto");
 
     return response.json(produtos)
 
@@ -33,7 +33,7 @@ class ProdutoController {
     const {codigo} = request.params;
 
    
-    const produto = await knex.select().from("produtos").where({codigo:codigo});
+    const produto = await knex.select().from("produto").where({codigo:codigo});
 
 
     return response.json(produto)
