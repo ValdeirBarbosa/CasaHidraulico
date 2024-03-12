@@ -9,6 +9,6 @@ exports.up = knex => knex.schema.createTable("ordemServico", table => {
 
 });
 
-exports.down = knex => knex.schema.droptable("ordemServico");
+exports.down = knex => knex.schema.dropTable("ordemServico");
 
 
