@@ -34,5 +34,21 @@ class OrdemServicoController {
     return response.json(orderServicoDados)
   }
 
+  async show(request, response){
+    const{os_id} = request.params
+
+    const osSelected = await knex("ordem_servico")
+    .select()
+    .where({ 'ordem_servico.id': os_id })                 
+    if(!osSelected){
+      throw new AppError("Ordem de serviço inexistente!",400)
+    }
+    console.log(osSelected);
+    const itemsOs = await knex('item_ordem_servico').select('*').where({ os_id })
+
+    return response.status(201).json({ osSelected, itemsOs });
+   
+  }
+
 }
 module.exports = OrdemServicoController
