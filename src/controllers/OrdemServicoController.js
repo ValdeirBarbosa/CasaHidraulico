@@ -15,8 +15,8 @@ class OrdemServicoController {
     }
     let [ordemServicoId] = await knex("ordem_servico").insert({ user_id, cliente_id, descricao_os })
     let orderServicoDados = []
-   
-    for(let prd of produtos){
+
+    for (let prd of produtos) {
       console.log(typeof (prd.prod_qtd));
       orderServicoDados.push({
         cliente_id,
@@ -34,25 +34,36 @@ class OrdemServicoController {
     return response.json(orderServicoDados)
   }
 
-  async show(request, response){
-    const{os_id} = request.params
+  async show(request, response) {
+    const { os_id } = request.params
 
-    const osSelected = await knex("ordem_servico")
+    const [osSelected] = await knex("ordem_servico")
       .join('cliente', 'cliente.id', '=', 'ordem_servico.cliente_id')
-      .select('ordem_servico.id as os', 'ordem_servico.descricao_os as descricao', 'ordem_servico.created_at as data','cliente.nome as cliente ', 'cliente.telefone as telefone')
+      .select('ordem_servico.id as os', 'ordem_servico.descricao_os as descricao', 'ordem_servico.created_at as data', 'cliente.nome as cliente ', 'cliente.telefone as telefone')
       .where({ 'ordem_servico.id': os_id })
-    
-    
-    if(!osSelected){
-      throw new AppError("Ordem de serviço inexistente!",400)
+
+
+    if (!osSelected) {
+      throw new AppError("Ordem de serviço inexistente!", 400)
     }
     console.log(osSelected);
     const itemsOs = await knex('item_ordem_servico')
-    .join('produto','produto.id','=','item_ordem_servico.produto_id')
-    .select('produto.codigo','produto.descricao','item_ordem_servico.prod_qtd').where({ os_id })
+      .join('produto', 'produto.id', '=', 'item_ordem_servico.produto_id')
+      .select('produto.codigo', 'produto.descricao', 'item_ordem_servico.prod_qtd').where({ os_id })
 
     return response.status(201).json({ osSelected, itemsOs });
-   
+
+  }
+
+  async index(request, response) {
+    const ordem_servico_total = await knex('ordem_servico')
+      .join('cliente', 'cliente.id', '=', 'ordem_servico.user_id')
+      .join('user', 'user.id', '=','ordem_servico.user_id')
+      .select('ordem_servico.id as OsNumber', 'ordem_servico.created_at', 'user.name as abertoPor', 'ordem_servico.descricao_os as descricaoDaOs',
+        'cliente.nome as cliente', 'cliente.telefone as telefone');
+    
+    console.log(ordem_servico_total)
+    return response.json(ordem_servico_total)
   }
 
 }
