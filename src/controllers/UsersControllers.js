@@ -61,4 +61,4 @@ class UsersControllers {
     return response.status(200).json({})
   }
 }
-module.exports = UsersControllers
+module.exports = UsersControllers 

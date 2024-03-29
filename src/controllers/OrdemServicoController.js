@@ -59,8 +59,9 @@ class OrdemServicoController {
     const ordem_servico_total = await knex('ordem_servico')
       .join('cliente', 'cliente.id', '=', 'ordem_servico.user_id')
       .join('user', 'user.id', '=','ordem_servico.user_id')
-      .select('ordem_servico.id as OsNumber', 'ordem_servico.created_at', 'user.name as abertoPor', 'ordem_servico.descricao_os as descricaoDaOs',
-        'cliente.nome as cliente', 'cliente.telefone as telefone');
+      .select('ordem_servico.id as OsNumber', 'ordem_servico.created_at',
+              'user.name as abertoPor', 'ordem_servico.descricao_os as descricaoDaOs',
+              'cliente.nome as cliente', 'cliente.telefone as telefone');
     
     console.log(ordem_servico_total)
     return response.json(ordem_servico_total)
